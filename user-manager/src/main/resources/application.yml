@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: user-manager
+
+
+server:
+  port: 2011

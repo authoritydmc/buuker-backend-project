@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Buuker-Backend
+  profiles:
+    active: default
+
+server:
+    port: 2010
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
