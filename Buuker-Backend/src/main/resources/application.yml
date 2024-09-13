@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Buuker-Backend
+    name: BUUKER-BACKEND-SERVICE
   profiles:
     active: default
 
