@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="UserManagerApplication [PROD]" type="Application" factoryName="Application">
+    <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
+    <option name="MAIN_CLASS_NAME" value="in.rajlabs.userservice.user_manager.UserManagerApplication" />
+    <module name="user-manager" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.profiles.active=prod" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="in.rajlabs.userservice.user_manager.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

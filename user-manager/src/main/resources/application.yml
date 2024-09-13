@@ -1,7 +1,14 @@
 spring:
   application:
-    name: user-manager
-
+    name: User-Service
+  profiles:
+    active: default
 
 server:
-  port: 2011
+    port: 2010
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
