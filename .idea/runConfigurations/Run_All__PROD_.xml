@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run All [PROD]" type="CompoundRunConfigurationType">
+    <toRun name="Buuker-Backend[PROD]" type="Application" />
+    <toRun name="UserManagerApplication [PROD]" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

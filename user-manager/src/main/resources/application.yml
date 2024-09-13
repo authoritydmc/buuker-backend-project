@@ -5,7 +5,7 @@ spring:
     active: default
 
 server:
-    port: 2010
+    port: 2011
 
 
 eureka:
