@@ -32,7 +32,7 @@ public class TransactionController {
      * @return ResponseEntity containing a list of TransactionLedgerDTO
      */
     @GetMapping
-    public ResponseEntity<?> getAllTransactions(@RequestParam String customerID) {
+    public ResponseEntity<HashMap<String, Object>> getAllTransactions(@RequestParam String customerID) {
         List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID);
         var responseMap=new HashMap<String, Object>();
         responseMap.put("transactions", transactions);
