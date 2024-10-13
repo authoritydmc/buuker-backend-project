@@ -26,7 +26,7 @@ class TransactionLedgerOutputDTOTest {
                 .runningBalance(1000.00)
                 .createdOn(System.currentTimeMillis())
                 .updatedOn(System.currentTimeMillis())
-                .bookedViaCard(true)
+                .bookingCardDetails("SBI-0011")
                 .remark("Fast delivery")
                 .orderStatus(OrderStatus.ORDERED)
                 .productName("Example Product")
@@ -48,7 +48,7 @@ class TransactionLedgerOutputDTOTest {
         assertEquals(1000.00, transactionOutput.getRunningBalance());
         assertNotNull(transactionOutput.getCreatedOn());
         assertNotNull(transactionOutput.getUpdatedOn());
-        assertTrue(transactionOutput.isBookedViaCard());
+        assertNotNull(transactionOutput.getBookingCardDetails());
         assertEquals("Fast delivery", transactionOutput.getRemark());
         assertEquals(OrderStatus.ORDERED, transactionOutput.getOrderStatus());
         assertEquals("Example Product", transactionOutput.getProductName());

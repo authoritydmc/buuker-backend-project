@@ -42,7 +42,7 @@ class TransactionLedgerMapperTest {
                 .shippedFrom("testLocation")
                 .shippingTrackingID("testTrackingId")
                 .customerID("testCustomerId")
-                .bookedViaCard(true)
+                .bookingCardDetails("SBI-0011")
                 .remark("testRemark")
                 .orderStatus(OrderStatus.DELIVERED)  // Assuming OrderStatus is an Enum
                 .productName("testProduct")
@@ -65,7 +65,7 @@ class TransactionLedgerMapperTest {
         assertEquals(dto.getShippedFrom(), entity.getShippedFrom());
         assertEquals(dto.getShippingTrackingID(), entity.getShippingTrackingID());
         assertEquals(dto.getCustomerID(), entity.getCustomerID());
-        assertEquals(dto.isBookedViaCard(), entity.isBookedViaCard());
+        assertEquals(dto.getBookingCardDetails(), entity.getBookingCardDetails());
         assertEquals(dto.getRemark(), entity.getRemark());
         assertEquals(dto.getOrderStatus(), entity.getOrderStatus());
         assertEquals(dto.getProductName(), entity.getProductName());
@@ -93,12 +93,12 @@ class TransactionLedgerMapperTest {
                 .bookingPlatform("testPlatform")
                 .bookingMobNo("1234567890")
                 .shippedFrom("testLocation")
+                .shippingTrackingID("SBI-0011")
                 .shippingTrackingID("testTrackingId")
                 .customerID("testCustomerId")
                 .runningBalance(1000.0)
                 .createdOn(System.currentTimeMillis())
                 .updatedOn(System.currentTimeMillis())
-                .bookedViaCard(true)
                 .remark("testRemark")
                 .orderStatus(OrderStatus.ORDERED)  // Assuming OrderStatus is an Enum
                 .productName("testProduct")
@@ -125,7 +125,7 @@ class TransactionLedgerMapperTest {
         assertEquals(entity.getRunningBalance(), dto.getRunningBalance());
         assertEquals(entity.getCreatedOn(), dto.getCreatedOn());
         assertEquals(entity.getUpdatedOn(), dto.getUpdatedOn());
-        assertEquals(entity.isBookedViaCard(), dto.isBookedViaCard());
+        assertEquals(entity.getBookingCardDetails(), dto.getBookingCardDetails());
         assertEquals(entity.getRemark(), dto.getRemark());
         assertEquals(entity.getOrderStatus(), dto.getOrderStatus());
         assertEquals(entity.getProductName(), dto.getProductName());
