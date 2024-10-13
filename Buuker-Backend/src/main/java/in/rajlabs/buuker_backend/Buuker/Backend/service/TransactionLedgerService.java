@@ -1,6 +1,9 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.service;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -14,7 +17,7 @@ public interface TransactionLedgerService {
      *
      * @return List of TransactionLedgerDTO
      */
-    List<TransactionLedgerDTO> getAllTransactions();
+    List<TransactionLedgerOutputDTO> getAllTransactions(String customerID);
 
     /**
      * Retrieves a transaction by its UUID.
@@ -22,7 +25,7 @@ public interface TransactionLedgerService {
      * @param transUuid Unique identifier of the transaction
      * @return TransactionLedgerDTO
      */
-    TransactionLedgerDTO getTransactionById(String transUuid);
+    TransactionLedgerOutputDTO getTransactionById(String transUuid);
 
     /**
      * Creates a new transaction.
@@ -30,7 +33,7 @@ public interface TransactionLedgerService {
      * @param transactionDTO Data Transfer Object containing transaction details
      * @return Created TransactionLedgerDTO
      */
-    TransactionLedgerDTO createTransaction(TransactionLedgerDTO transactionDTO);
+    TransactionLedgerOutputDTO createTransaction(TransactionLedgerInputDTO transactionDTO);
 
     /**
      * Updates an existing transaction.
@@ -39,7 +42,7 @@ public interface TransactionLedgerService {
      * @param transactionDTO Data Transfer Object containing updated transaction details
      * @return Updated TransactionLedgerDTO
      */
-    TransactionLedgerDTO updateTransaction(String transUuid, TransactionLedgerDTO transactionDTO);
+    TransactionLedgerOutputDTO updateTransaction(String transUuid, TransactionLedgerInputDTO transactionDTO);
 
     /**
      * Deletes a transaction by its UUID.

@@ -1,6 +1,7 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.mapper;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class TransactionLedgerMapper {
      * @param dto Data Transfer Object
      * @return TransactionLedger entity
      */
-    public TransactionLedger toEntity(TransactionLedgerDTO dto) {
+    public TransactionLedger toEntity(TransactionLedgerInputDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -49,37 +50,36 @@ public class TransactionLedgerMapper {
     }
 
     /**
-     * Converts TransactionLedger entity to TransactionLedgerDTO.
+     * Converts TransactionLedger entity to TransactionLedgerOutputDTO.
      *
      * @param entity TransactionLedger entity
-     * @return TransactionLedgerDTO
+     * @return TransactionLedgerOutputDTO
      */
-    public TransactionLedgerDTO toDTO(TransactionLedger entity) {
+    public TransactionLedgerOutputDTO toDTO(TransactionLedger entity) {
         if (entity == null) {
             return null;
         }
 
-        TransactionLedgerDTO dto = new TransactionLedgerDTO();
-        dto.setTransactionID(entity.getTransactionID());
-        dto.setBuyPrice(entity.getBuyPrice());
-        dto.setFinalReceiveAmount(entity.getFinalReceiveAmount());
-        dto.setCommission(entity.getCommission());
-        dto.setUnit(entity.getUnit());
-        dto.setMerchantID(entity.getMerchantID());
-        dto.setBookingPlatform(entity.getBookingPlatform());
-        dto.setBookingMobNo(entity.getBookingMobNo());
-        dto.setShippedFrom(entity.getShippedFrom());
-        dto.setShippingTrackingID(entity.getShippingTrackingID());
-        dto.setCustomerID(entity.getCustomerID());
-//        dto.setRunningBalance(entity.getRunningBalance());
-        dto.setCreatedOn(entity.getCreatedOn());
-        dto.setUpdatedOn(entity.getUpdatedOn());
-        dto.setBookedViaCard(entity.isBookedViaCard());
-        dto.setRemark(entity.getRemark());
-        dto.setOrderStatus(entity.getOrderStatus());
-        dto.setProductName(entity.getProductName());
-        dto.setProductLink(entity.getProductLink());
-
-        return dto;
+        return TransactionLedgerOutputDTO.builder()
+                .transactionID(entity.getTransactionID())
+                .buyPrice(entity.getBuyPrice())
+                .finalReceiveAmount(entity.getFinalReceiveAmount())
+                .commission(entity.getCommission())
+                .unit(entity.getUnit())
+                .merchantID(entity.getMerchantID())
+                .bookingPlatform(entity.getBookingPlatform())
+                .bookingMobNo(entity.getBookingMobNo())
+                .shippedFrom(entity.getShippedFrom())
+                .customerID(entity.getCustomerID())
+                .shippingTrackingID(entity.getShippingTrackingID())
+                .runningBalance(entity.getRunningBalance())
+                .createdOn(entity.getCreatedOn())
+                .updatedOn(entity.getUpdatedOn())
+                .bookedViaCard(entity.isBookedViaCard())
+                .remark(entity.getRemark())
+                .orderStatus(entity.getOrderStatus())
+                .productName(entity.getProductName())
+                .productLink(entity.getProductLink())
+                .build();
     }
 }

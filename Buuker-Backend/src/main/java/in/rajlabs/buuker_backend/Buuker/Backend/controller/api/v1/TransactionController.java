@@ -1,24 +1,30 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.controller.api.v1;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.service.TransactionLedgerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.API; // Import the API class
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * REST controller for managing TransactionLedger entities.
  */
 @RestController
-@RequestMapping("/api/v1/transactions")
+@RequestMapping(API.API_VERSION_V1 + "transactions") // Use the API constant for versioning
 public class TransactionController {
 
-    @Autowired
-    private TransactionLedgerService service;
+    private final TransactionLedgerService service;
+
+    public TransactionController(TransactionLedgerService service) {
+        this.service = service;
+    }
 
     /**
      * Retrieves all transactions.
@@ -26,9 +32,12 @@ public class TransactionController {
      * @return ResponseEntity containing a list of TransactionLedgerDTO
      */
     @GetMapping
-    public ResponseEntity<List<TransactionLedgerDTO>> getAllTransactions() {
-        List<TransactionLedgerDTO> transactions = service.getAllTransactions();
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    public ResponseEntity<?> getAllTransactions(@RequestParam String customerID) {
+        List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID);
+        var responseMap=new HashMap<String, Object>();
+        responseMap.put("transactions", transactions);
+        responseMap.put("total", transactions.size());
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
     /**
@@ -38,8 +47,8 @@ public class TransactionController {
      * @return ResponseEntity containing the TransactionLedgerDTO
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionLedgerDTO> getTransactionById(@PathVariable("id") String id) {
-        TransactionLedgerDTO transaction = service.getTransactionById(id);
+    public ResponseEntity<TransactionLedgerOutputDTO> getTransactionById(@PathVariable("id") String id) {
+        TransactionLedgerOutputDTO transaction = service.getTransactionById(id);
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
@@ -50,9 +59,9 @@ public class TransactionController {
      * @return ResponseEntity containing the created TransactionLedgerDTO
      */
     @PostMapping
-    public ResponseEntity<TransactionLedgerDTO> createTransaction(
-            @Validated @RequestBody TransactionLedgerDTO transactionDTO) {
-        TransactionLedgerDTO createdTransaction = service.createTransaction(transactionDTO);
+    public ResponseEntity<TransactionLedgerOutputDTO> createTransaction(
+            @Validated @RequestBody TransactionLedgerInputDTO transactionDTO) {
+        TransactionLedgerOutputDTO createdTransaction = service.createTransaction(transactionDTO);
         return new ResponseEntity<>(createdTransaction, HttpStatus.CREATED);
     }
 
@@ -64,10 +73,10 @@ public class TransactionController {
      * @return ResponseEntity containing the updated TransactionLedgerDTO
      */
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionLedgerDTO> updateTransaction(
+    public ResponseEntity<TransactionLedgerOutputDTO> updateTransaction(
             @PathVariable("id") String id,
-            @Validated @RequestBody TransactionLedgerDTO transactionDTO) {
-        TransactionLedgerDTO updatedTransaction = service.updateTransaction(id, transactionDTO);
+            @Validated @RequestBody TransactionLedgerInputDTO transactionDTO) {
+        TransactionLedgerOutputDTO updatedTransaction = service.updateTransaction(id, transactionDTO);
         return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
     }
 
