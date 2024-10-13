@@ -130,7 +130,13 @@ public class TransactionController {
             // Use the ResponseHelper to create a success response
             return ResponseEntity.ok(ResponseHelper.createSuccessResponseWithTimestamp(
                     "Successfully restored record " + id));
-        } else {
+        }else if(restorationResult.getMessage().contains("not found"))
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseHelper.createErrorResponseWithTimestamp(
+                            restorationResult.getMessage()));
+        }
+        else {
             // Use the ResponseHelper to create an error response
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ResponseHelper.createErrorResponseWithTimestamp(
