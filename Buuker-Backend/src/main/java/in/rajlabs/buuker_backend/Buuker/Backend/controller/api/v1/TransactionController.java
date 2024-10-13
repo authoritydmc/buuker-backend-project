@@ -116,7 +116,7 @@ public class TransactionController {
                     "Successfully restored record " + id));
         } else {
             // Use the ResponseHelper to create an error response
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ResponseHelper.createErrorResponseWithTimestamp(
                             restorationResult.getMessage()));
         }
