@@ -1,6 +1,7 @@
 package in.rajlabs.buuker_backend.Buuker.Backend;
 
 import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.v1.TransactionController;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.OrderStatus;
@@ -85,10 +86,10 @@ class TransactionControllerTest {
         // Arrange
         String customerID = "testCustomerId";
         TransactionLedgerOutputDTO transaction = createSampleOutputDTO();
-        when(service.getAllTransactions(customerID)).thenReturn(List.of(transaction));
+        when(service.getAllTransactions(customerID, true)).thenReturn(List.of(transaction));
 
         // Act
-        ResponseEntity<HashMap<String, Object>> response = controller.getAllTransactions(customerID);
+        ResponseEntity<HashMap<String, Object>> response = controller.getAllTransactions(customerID, true);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -156,12 +157,63 @@ class TransactionControllerTest {
     void testDeleteTransaction() {
         // Arrange
         String transactionId = "testTransactionId";
+        when(service.deleteTransaction(transactionId)).thenReturn(new Result<>(true, "Transaction deleted successfully."));
 
         // Act
-        ResponseEntity<Void> response = controller.deleteTransaction(transactionId);
+        ResponseEntity<?> response = controller.deleteTransaction(transactionId);
 
         // Assert
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(service, times(1)).deleteTransaction(transactionId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("success"));
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("message"));
+    }
+
+    @Test
+    void testDeleteTransactionNotFound() {
+        // Arrange
+        String transactionId = "testTransactionId";
+        when(service.deleteTransaction(transactionId)).thenReturn(new Result<>(false, "Transaction not found."));
+
+        // Act
+        ResponseEntity<?> response = controller.deleteTransaction(transactionId);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("success"));
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("message"));
+    }
+
+    @Test
+    void testRestoreTransaction() {
+        // Arrange
+        String transactionId = "testTransactionId";
+        when(service.restoreTransaction(transactionId)).thenReturn(new Result<>(true, "Transaction restored successfully."));
+
+        // Act
+        ResponseEntity<?> response = controller.restoreTransaction(transactionId);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("success"));
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("message"));
+    }
+
+    @Test
+    void testRestoreTransactionNotFound() {
+        // Arrange
+        String transactionId = "testTransactionId";
+        when(service.restoreTransaction(transactionId)).thenReturn(new Result<>(false, "Transaction not found."));
+
+        // Act
+        ResponseEntity<?> response = controller.restoreTransaction(transactionId);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("success"));
+        assertTrue(((HashMap<String, Object>) response.getBody()).containsKey("message"));
     }
 }

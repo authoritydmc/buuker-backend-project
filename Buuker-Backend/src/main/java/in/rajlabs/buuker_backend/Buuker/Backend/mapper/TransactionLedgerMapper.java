@@ -35,6 +35,7 @@ public class TransactionLedgerMapper {
                 .customerID(dto.getCustomerID())
                 .bookedViaCard(dto.isBookedViaCard())
                 .remark(dto.getRemark())
+                .deletedOn(-1L) //default set of deletionTime
                 .orderStatus(dto.getOrderStatus())
                 .productName(dto.getProductName())
                 .productLink(dto.getProductLink());
@@ -76,6 +77,8 @@ public class TransactionLedgerMapper {
                 .createdOn(entity.getCreatedOn())
                 .updatedOn(entity.getUpdatedOn())
                 .bookedViaCard(entity.isBookedViaCard())
+                .isDeleted(entity.isDeleted())
+                .deletedOn(entity.getDeletedOn())
                 .remark(entity.getRemark())
                 .orderStatus(entity.getOrderStatus())
                 .productName(entity.getProductName())

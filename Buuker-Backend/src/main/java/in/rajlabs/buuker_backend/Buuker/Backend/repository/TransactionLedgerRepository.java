@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface TransactionLedgerRepository extends JpaRepository<TransactionLedger, String> {
     // Additional query methods can be defined here if needed
-    @Query("select t from TransactionLedger t where t.customerID = ?1")
+    @Query("select t from TransactionLedger t where t.customerID = ?1 ")
     List<TransactionLedger> getAllCustomerTransactions(String customerID);
+    @Query("select t from TransactionLedger t where t.customerID = ?1 and t.isDeleted <> true")
+    List<TransactionLedger> getAllCustomerTransactionsNonDeleted(String customerID);
 }

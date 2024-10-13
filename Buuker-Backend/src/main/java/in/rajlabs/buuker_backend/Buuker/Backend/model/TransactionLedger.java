@@ -29,6 +29,8 @@ public class TransactionLedger {
 
     private double commission;
 
+    private Long deletedOn;
+    private boolean isDeleted;
 
     private int unit;
 

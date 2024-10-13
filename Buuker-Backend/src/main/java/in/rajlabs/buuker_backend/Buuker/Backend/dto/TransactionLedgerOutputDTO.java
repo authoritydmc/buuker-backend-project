@@ -35,6 +35,10 @@ public class TransactionLedgerOutputDTO {
 
     private String shippingTrackingID;
 
+    private boolean isDeleted;
+
+    private long deletedOn;
+
     private double runningBalance; 
 
     /**

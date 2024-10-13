@@ -1,5 +1,6 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.service;
 
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.exception.ResourceAlreadyExistsException;
@@ -29,8 +30,8 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
     }
 
     @Override
-    public List<TransactionLedgerOutputDTO> getAllTransactions(String customerID) {
-        List<TransactionLedger> transactions =repository.getAllCustomerTransactions(customerID);
+    public List<TransactionLedgerOutputDTO> getAllTransactions(String customerID, boolean includeDeleted) {
+        List<TransactionLedger> transactions =includeDeleted? repository.getAllCustomerTransactions(customerID): repository.getAllCustomerTransactionsNonDeleted(customerID);
         return transactions.stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
@@ -98,9 +99,45 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
     }
 
     @Override
-    public void deleteTransaction(String transUuid) {
+    public Result<Void> deleteTransaction(String transUuid) {
         TransactionLedger existingTransaction = repository.findById(transUuid)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + transUuid));
-        repository.delete(existingTransaction);
+                .orElse(null); // No exception, just null if not found
+
+        if (existingTransaction == null) {
+            return new Result<>(false, "Transaction not found."); // Return result without data
+        }
+
+        if (existingTransaction.isDeleted()) {
+            return new Result<>(false, "Transaction already deleted."); // Return result without data
+        }
+
+        // Mark the transaction as deleted
+        existingTransaction.setDeleted(true);
+        existingTransaction.setDeletedOn(System.currentTimeMillis());
+        repository.save(existingTransaction);
+
+        return new Result<>(true, "Transaction deleted successfully."); // Return result without data
+    }
+
+
+    @Override
+    public Result<Void> restoreTransaction(String transUuid) {
+        TransactionLedger existingTransaction = repository.findById(transUuid)
+                .orElse(null); // No exception, just null if not found
+
+        if (existingTransaction == null) {
+            return new Result<>(false, "Transaction not found."); // Return result without data
+        }
+
+        if (!existingTransaction.isDeleted()) {
+            return new Result<>(false, "Transaction already restored."); // Return result without data
+        }
+
+        // Mark the transaction as deleted
+        existingTransaction.setDeleted(false);
+        existingTransaction.setDeletedOn(-1L);
+        repository.save(existingTransaction);
+
+        return new Result<>(true, "Transaction restored successfully.");
     }
 }

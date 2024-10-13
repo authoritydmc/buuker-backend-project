@@ -1,9 +1,11 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.controller.api.v1;
 
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.service.TransactionLedgerService;
 import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.API; // Import the API class
+import in.rajlabs.buuker_backend.Buuker.Backend.util.ResponseHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +34,9 @@ public class TransactionController {
      * @return ResponseEntity containing a list of TransactionLedgerDTO
      */
     @GetMapping
-    public ResponseEntity<HashMap<String, Object>> getAllTransactions(@RequestParam String customerID) {
-        List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID);
-        var responseMap=new HashMap<String, Object>();
+    public ResponseEntity<HashMap<String, Object>> getAllTransactions(@RequestParam String customerID,@RequestParam(defaultValue = "false") boolean includeDeleted) {
+        List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID,includeDeleted);
+        var responseMap = new HashMap<String, Object>();
         responseMap.put("transactions", transactions);
         responseMap.put("total", transactions.size());
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
@@ -87,8 +89,36 @@ public class TransactionController {
      * @return ResponseEntity with HTTP status
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable("id") String id) {
-        service.deleteTransaction(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> deleteTransaction(@PathVariable("id") String id) {
+        Result<Void> deletionResult = service.deleteTransaction(id); // Get the result from the service
+
+        HashMap<String, Object> response;
+        if (deletionResult.isSuccess()) {
+            response = ResponseHelper.createSuccessResponseWithTimestamp(deletionResult.getMessage());
+            return ResponseEntity.ok(response); // 200 OK
+        } else {
+            response = ResponseHelper.createErrorResponseWithTimestamp(deletionResult.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response); // 409 Conflict
+        }
+    }
+
+
+
+    @PutMapping("/restore/{id}") // Use a more descriptive mapping for restoration
+    public ResponseEntity<?> restoreTransaction(@PathVariable("id") String id) {
+        // Attempt to restore the transaction using the service
+        Result<Void> restorationResult = service.restoreTransaction(id);
+
+        // Check if the restoration was successful
+        if (restorationResult.isSuccess()) {
+            // Use the ResponseHelper to create a success response
+            return ResponseEntity.ok(ResponseHelper.createSuccessResponseWithTimestamp(
+                    "Successfully restored record " + id));
+        } else {
+            // Use the ResponseHelper to create an error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseHelper.createErrorResponseWithTimestamp(
+                            restorationResult.getMessage()));
+        }
     }
 }

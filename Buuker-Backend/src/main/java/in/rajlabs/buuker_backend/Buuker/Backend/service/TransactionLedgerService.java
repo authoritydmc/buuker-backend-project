@@ -1,9 +1,8 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.service;
 
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
-import jakarta.validation.Valid;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface TransactionLedgerService {
      *
      * @return List of TransactionLedgerDTO
      */
-    List<TransactionLedgerOutputDTO> getAllTransactions(String customerID);
+    List<TransactionLedgerOutputDTO> getAllTransactions(String customerID, boolean includeDeleted);
 
     /**
      * Retrieves a transaction by its UUID.
@@ -48,6 +47,9 @@ public interface TransactionLedgerService {
      * Deletes a transaction by its UUID.
      *
      * @param transUuid Unique identifier of the transaction to delete
+     * @return
      */
-    void deleteTransaction(String transUuid);
+    Result<Void> deleteTransaction(String transUuid);
+
+    Result<Void> restoreTransaction(String id);
 }

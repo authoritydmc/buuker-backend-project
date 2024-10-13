@@ -81,7 +81,7 @@ public class ResponseHelper {
      */
     public static HashMap<String, Object> createErrorResponseWithTimestamp(String message) {
         HashMap<String, Object> response = createErrorResponse(message);
-        response.put(Constants.KEY_TIMESTAMP, new Date()); // Add timestamp
+        response.put(Constants.KEY_TIMESTAMP, Instant.now().toEpochMilli()); // Add timestamp
         return response;
     }
 
