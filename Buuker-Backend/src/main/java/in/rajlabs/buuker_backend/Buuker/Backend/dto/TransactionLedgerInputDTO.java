@@ -21,12 +21,16 @@ public class TransactionLedgerInputDTO {
     private String transactionID;
 
     @NotNull(message = "Buy price is required")
+    @Min(value = 1,message = "finalReceiveAmount can't be zero")
+
     private double buyPrice;
 
     @NotNull(message = "Final receive amount is required")
+    @Min(value = 1,message = "finalReceiveAmount can't be zero")
     private double finalReceiveAmount;
 
     @NotNull(message = "Commission is required")
+    @Min(value = 0,message = "finalReceiveAmount can not be less than 0")
     private double commission;
 
     @NotNull(message = "Unit is required")
