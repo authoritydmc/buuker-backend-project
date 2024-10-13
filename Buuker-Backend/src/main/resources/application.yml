@@ -4,6 +4,20 @@ spring:
   profiles:
     active: default
 
+  datasource:
+      url: jdbc:mysql://localhost:3306/buuker_db?useSSL=false&serverTimezone=UTC
+      username: ${MYSQL_USERNAME:your_mysql_user_name}
+      password: ${MYSQL_PASSWORD:provide_your_own_passwd}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect
+
 server:
     port: 2010
 
