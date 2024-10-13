@@ -53,17 +53,15 @@ public class TransactionLedgerInputDTO {
     @NotBlank(message = "Customer ID is required")
     private String customerID;
 
-    /**
-     * This field is managed automatically by the system.
-     */
+    @NotNull(message = "CreatedOn timestamp is required")
+
     private Long createdOn;
 
-    /**
-     * This field is managed automatically by the system.
-     */
+    @NotNull(message = "updatedOn timestamp is required")
+
     private Long updatedOn;
 
-    private boolean bookedViaCard;
+    private String bookingCardDetails;
 
     private String remark;
 

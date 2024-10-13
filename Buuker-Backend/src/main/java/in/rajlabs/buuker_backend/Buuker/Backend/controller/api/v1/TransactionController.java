@@ -3,6 +3,8 @@ package in.rajlabs.buuker_backend.Buuker.Backend.controller.api.v1;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerPatchDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import in.rajlabs.buuker_backend.Buuker.Backend.service.TransactionLedgerService;
 import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.API; // Import the API class
 import in.rajlabs.buuker_backend.Buuker.Backend.util.ResponseHelper;
@@ -34,8 +36,8 @@ public class TransactionController {
      * @return ResponseEntity containing a list of TransactionLedgerDTO
      */
     @GetMapping
-    public ResponseEntity<HashMap<String, Object>> getAllTransactions(@RequestParam String customerID,@RequestParam(defaultValue = "false") boolean includeDeleted) {
-        List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID,includeDeleted);
+    public ResponseEntity<HashMap<String, Object>> getAllTransactions(@RequestParam String customerID, @RequestParam(defaultValue = "false") boolean includeDeleted) {
+        List<TransactionLedgerOutputDTO> transactions = service.getAllTransactions(customerID, includeDeleted);
         var responseMap = new HashMap<String, Object>();
         responseMap.put("transactions", transactions);
         responseMap.put("total", transactions.size());
@@ -102,6 +104,20 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Partially updates an existing transaction ledger.
+     *
+     * @param transactionId The ID of the transaction to update.
+     * @param patchDTO      DTO containing the fields to be updated.
+     * @return ResponseEntity with the updated TransactionLedger.
+     */
+    @PatchMapping("/{transactionId}")
+    public ResponseEntity<?> patchTransaction(
+            @PathVariable String transactionId,
+            @RequestBody TransactionLedgerPatchDTO patchDTO) {
+        TransactionLedgerOutputDTO updatedTransaction = service.patchTransaction(transactionId, patchDTO);
+        return ResponseEntity.ok(updatedTransaction);
+    }
 
 
     @PutMapping("/restore/{id}") // Use a more descriptive mapping for restoration

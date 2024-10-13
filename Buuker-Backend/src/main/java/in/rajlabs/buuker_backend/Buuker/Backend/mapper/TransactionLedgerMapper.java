@@ -33,7 +33,7 @@ public class TransactionLedgerMapper {
                 .shippedFrom(dto.getShippedFrom())
                 .shippingTrackingID(dto.getShippingTrackingID())
                 .customerID(dto.getCustomerID())
-                .bookedViaCard(dto.isBookedViaCard())
+                .bookingCardDetails(dto.getBookingCardDetails())
                 .remark(dto.getRemark())
                 .deletedOn(-1L) //default set of deletionTime
                 .orderStatus(dto.getOrderStatus())
@@ -76,7 +76,7 @@ public class TransactionLedgerMapper {
                 .runningBalance(entity.getRunningBalance())
                 .createdOn(entity.getCreatedOn())
                 .updatedOn(entity.getUpdatedOn())
-                .bookedViaCard(entity.isBookedViaCard())
+                .bookingCardDetails(entity.getBookingCardDetails())
                 .isDeleted(entity.isDeleted())
                 .deletedOn(entity.getDeletedOn())
                 .remark(entity.getRemark())

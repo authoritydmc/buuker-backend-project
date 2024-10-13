@@ -57,7 +57,7 @@ public class TransactionLedger {
     private Long updatedOn;
 
 
-    private boolean bookedViaCard;
+    private String bookingCardDetails;
 
 
     private String remark;
@@ -69,16 +69,17 @@ public class TransactionLedger {
 
     private String productLink;
 
-    @PrePersist
-    protected void onCreate() {
-        long currentEpoch = System.currentTimeMillis();
-        this.createdOn = currentEpoch;
-        this.updatedOn = currentEpoch;
-        this.setDeletedOn(-1L);
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedOn = System.currentTimeMillis();
-    }
+//    @PrePersist as all time details are trusted  from client side +offline support mode for android client
+//    protected void onCreate() {
+//        long currentEpoch = System.currentTimeMillis();
+//        this.createdOn = currentEpoch;
+//        this.updatedOn = currentEpoch;
+//        this.setDeletedOn(-1L);
+//    }
+//
+//
+////    @PreUpdate
+////    protected void onUpdate() {
+////        this.updatedOn = System.currentTimeMillis();
+////    }
 }

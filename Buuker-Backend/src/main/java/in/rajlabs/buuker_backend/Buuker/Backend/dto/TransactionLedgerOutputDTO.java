@@ -38,7 +38,7 @@ public class TransactionLedgerOutputDTO {
     private boolean isDeleted;
 
     private long deletedOn;
-
+    private String bookingCardDetails;
     private double runningBalance; 
 
     /**
@@ -53,7 +53,6 @@ public class TransactionLedgerOutputDTO {
      */
     private Long updatedOn;
 
-    private boolean bookedViaCard;
 
     private String remark;
 

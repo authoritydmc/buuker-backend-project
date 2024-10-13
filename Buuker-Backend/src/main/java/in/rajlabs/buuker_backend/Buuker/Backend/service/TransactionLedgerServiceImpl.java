@@ -3,6 +3,7 @@ package in.rajlabs.buuker_backend.Buuker.Backend.service;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerPatchDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.exception.ResourceAlreadyExistsException;
 import in.rajlabs.buuker_backend.Buuker.Backend.exception.ResourceNotFoundException;
 import in.rajlabs.buuker_backend.Buuker.Backend.mapper.TransactionLedgerMapper;
@@ -31,7 +32,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
 
     @Override
     public List<TransactionLedgerOutputDTO> getAllTransactions(String customerID, boolean includeDeleted) {
-        List<TransactionLedger> transactions =includeDeleted? repository.getAllCustomerTransactions(customerID): repository.getAllCustomerTransactionsNonDeleted(customerID);
+        List<TransactionLedger> transactions = includeDeleted ? repository.getAllCustomerTransactions(customerID) : repository.getAllCustomerTransactionsNonDeleted(customerID);
         return transactions.stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
@@ -82,7 +83,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         existingTransaction.setShippedFrom(transactionDTO.getShippedFrom());
         existingTransaction.setShippingTrackingID(transactionDTO.getShippingTrackingID());
         existingTransaction.setRunningBalance(calculateRunningBalance(transactionDTO.getCustomerID()));
-        existingTransaction.setBookedViaCard(transactionDTO.isBookedViaCard());
+        existingTransaction.setBookingCardDetails(transactionDTO.getBookingCardDetails());
         existingTransaction.setCustomerID(transactionDTO.getCustomerID());
         existingTransaction.setRemark(transactionDTO.getRemark());
         existingTransaction.setOrderStatus(transactionDTO.getOrderStatus());
@@ -139,5 +140,42 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         repository.save(existingTransaction);
 
         return new Result<>(true, "Transaction restored successfully.");
+    }
+
+    /**
+     * Updates an existing transaction ledger partially.
+     *
+     * @param transactionId The ID of the transaction to update.
+     * @param patchDTO      DTO containing the fields to be updated.
+     * @return The updated TransactionLedger entity.
+     */
+    public TransactionLedgerOutputDTO patchTransaction(String transactionId, TransactionLedgerPatchDTO patchDTO) {
+        TransactionLedger existingTransaction = repository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
+
+        // Update fields if provided in the patchDTO
+        if (patchDTO.getBuyPrice() > 0) existingTransaction.setBuyPrice(patchDTO.getBuyPrice());
+        if (patchDTO.getFinalReceiveAmount() > 0)
+            existingTransaction.setFinalReceiveAmount(patchDTO.getFinalReceiveAmount());
+        if (patchDTO.getCommission() > 0) existingTransaction.setCommission(patchDTO.getCommission());
+        if (patchDTO.getUnit() > 0) existingTransaction.setUnit(patchDTO.getUnit());
+        if (patchDTO.getCustomerID() != null) existingTransaction.setCustomerID(patchDTO.getCustomerID());
+        if (patchDTO.getMerchantID() != null) existingTransaction.setMerchantID(patchDTO.getMerchantID());
+        if (patchDTO.getBookingPlatform() != null)
+            existingTransaction.setBookingPlatform(patchDTO.getBookingPlatform());
+        if (patchDTO.getBookingMobNo() != null) existingTransaction.setBookingMobNo(patchDTO.getBookingMobNo());
+        if (patchDTO.getShippedFrom() != null) existingTransaction.setShippedFrom(patchDTO.getShippedFrom());
+        if (patchDTO.getShippingTrackingID() != null)
+            existingTransaction.setShippingTrackingID(patchDTO.getShippingTrackingID());
+        if (patchDTO.getRunningBalance() > 0) existingTransaction.setRunningBalance(patchDTO.getRunningBalance());
+        if (patchDTO.getBookingCardDetails() != null)
+            existingTransaction.setBookingCardDetails(patchDTO.getBookingCardDetails());
+        if (patchDTO.getRemark() != null) existingTransaction.setRemark(patchDTO.getRemark());
+        if (patchDTO.getOrderStatus() != null) existingTransaction.setOrderStatus(patchDTO.getOrderStatus());
+        if (patchDTO.getProductName() != null) existingTransaction.setProductName(patchDTO.getProductName());
+        if (patchDTO.getProductLink() != null) existingTransaction.setProductLink(patchDTO.getProductLink());
+        if (patchDTO.getUpdatedOn() != null) existingTransaction.setUpdatedOn(patchDTO.getUpdatedOn());
+
+        return mapper.toDTO(repository.save(existingTransaction));
     }
 }
