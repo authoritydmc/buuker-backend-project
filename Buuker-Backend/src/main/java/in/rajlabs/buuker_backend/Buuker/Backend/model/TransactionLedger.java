@@ -74,6 +74,7 @@ public class TransactionLedger {
         long currentEpoch = System.currentTimeMillis();
         this.createdOn = currentEpoch;
         this.updatedOn = currentEpoch;
+        this.setDeletedOn(-1L);
     }
 
     @PreUpdate

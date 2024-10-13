@@ -88,6 +88,7 @@ class TransactionLedgerMapperTest {
                 .finalReceiveAmount(95.0)
                 .commission(5.0)
                 .unit(1)
+                .deletedOn(-1L)
                 .merchantID("testMerchantId")
                 .bookingPlatform("testPlatform")
                 .bookingMobNo("1234567890")
@@ -117,6 +118,7 @@ class TransactionLedgerMapperTest {
         assertEquals(entity.getMerchantID(), dto.getMerchantID());
         assertEquals(entity.getBookingPlatform(), dto.getBookingPlatform());
         assertEquals(entity.getBookingMobNo(), dto.getBookingMobNo());
+        assertEquals(entity.getDeletedOn(),-1L);
         assertEquals(entity.getShippedFrom(), dto.getShippedFrom());
         assertEquals(entity.getCustomerID(), dto.getCustomerID());
         assertEquals(entity.getShippingTrackingID(), dto.getShippingTrackingID());
