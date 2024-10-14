@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 
     @Override
     public void deleteTransaction(UUID transactionId) {
-
+        //TODO: Implement this
     }
 
     @Override
@@ -101,7 +102,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
     }
 
     private BigDecimal calculateRunningBalance(AccountTransaction accountTransaction) {
-        log.info("Calculating running balance for account " + accountTransaction.getAccountId());
+        log.info("Calculating running balance for account " + accountTransaction.getAccountId() + "at " + accountTransaction.getId());
         Optional<AccountTransaction> latestTransaction = accountTransactionRepository.getPreviousAccountTransaction(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId(), accountTransaction.getId());
         BigDecimal runningBalance = BigDecimal.ZERO;
         if (latestTransaction.isPresent()) {
@@ -124,16 +125,33 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
         return runningBalance;
     }
 
+
+
     @Override
     public void deleteTransaction(TransactionLedger existingTransaction) {
         var transaction = accountTransactionRepository.getByTransactionID(existingTransaction.getTransactionID());
         if (transaction.isPresent()) {
             log.info("Transaction ID exist :: Deleting : {}", transaction.get().getId());
+            //update running balance
+            updateRunningBalanceForRecordDeletion(transaction.get());
             accountTransactionRepository.delete(transaction.get());
             return;
         }
         log.info("Transaction ID does not exist :: Deleting : {}", existingTransaction.getTransactionID());
 
+    }
+
+    private void updateRunningBalanceForRecordDeletion(AccountTransaction accountTransaction) {
+        log.info("Calculating running balance for account " + accountTransaction.getAccountId());
+        Optional<AccountTransaction> latestTransaction = accountTransactionRepository.getPreviousAccountTransaction(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId(), accountTransaction.getId());
+        BigDecimal runningBalance = BigDecimal.ZERO;
+        if (latestTransaction.isPresent()) {
+            runningBalance = latestTransaction.get().getRunningBalance();
+        }
+        log.info("Initial  running balance is {}", runningBalance);
+        //before returning also update the running balance of other items
+        List<AccountTransaction> idsToUpdate = accountTransactionRepository.getAllAccountsToUpdate(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId(), accountTransaction.getId());
+        updateRunningBalance(idsToUpdate, runningBalance);
     }
 
 
@@ -165,6 +183,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
             accountTransactionRepository.save(transaction);
         }
     }
+
 
 }
 
