@@ -17,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class AccountTransaction {
 
     @Id
@@ -25,6 +26,7 @@ public class AccountTransaction {
 
     private String accountId;
 
+    private String transactionId;
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType; // CREDIT or DEBIT
 

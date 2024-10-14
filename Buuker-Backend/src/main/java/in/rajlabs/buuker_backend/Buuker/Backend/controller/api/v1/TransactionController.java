@@ -87,6 +87,8 @@ public class TransactionController {
      * @param transactionDTO DTO containing updated transaction details
      * @return ResponseEntity containing the updated TransactionLedgerDTO
      */
+
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<TransactionLedgerOutputDTO> updateTransaction(
             @PathVariable("id") String id,
@@ -102,6 +104,7 @@ public class TransactionController {
      * @return ResponseEntity with HTTP status
      */
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> deleteTransaction(@PathVariable("id") String id) {
         Result<Void> deletionResult = service.deleteTransaction(id); // Get the result from the service
 
@@ -123,6 +126,7 @@ public class TransactionController {
      * @return ResponseEntity with the updated TransactionLedger.
      */
     @PatchMapping("/{transactionId}")
+    @Transactional
     public ResponseEntity<?> patchTransaction(
             @PathVariable String transactionId,
             @Validated @RequestBody TransactionLedgerPatchDTO patchDTO) {
@@ -131,6 +135,7 @@ public class TransactionController {
     }
 
 
+    @Transactional
     @PutMapping("/restore/{id}") // Use a more descriptive mapping for restoration
     public ResponseEntity<?> restoreTransaction(@PathVariable("id") String id) {
         // Attempt to restore the transaction using the service

@@ -1,6 +1,7 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.mapper;
 
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.AccountTransactionDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.AccountTransactionOutputDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.AccountTransaction;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionType;
@@ -65,7 +66,7 @@ public class AccountTransactionMapper {
 
         AccountTransaction entity = AccountTransaction.builder()
                 .transactionType(TransactionType.DEBIT)
-                .id(UUID.fromString(transaction.getTransactionID()))
+                .transactionId(transaction.getTransactionID())
                 .amount(BigDecimal.valueOf(transaction.getFinalReceiveAmount()))
                 .description(transaction.getRemark())
                 .accountId(AccountUtils.getAccountID(transaction.getCustomerID(), transaction.getMerchantID()))
@@ -74,6 +75,26 @@ public class AccountTransactionMapper {
                 .build();
 
         return entity;
+
+    }
+
+    public AccountTransactionOutputDTO toOutputDTO(AccountTransaction entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return AccountTransactionOutputDTO.builder()
+                .transactionType(entity.getTransactionType())
+                .amount(entity.getAmount())
+                .description(entity.getDescription())
+                .id(entity.getId())
+                .transactionId(entity.getTransactionId())
+                .accountId(entity.getAccountId())
+                .createdBy(entity.getCreatedBy())
+                .updatedBy(entity.getUpdatedBy())
+                .createdOn(entity.getCreatedOn())
+                .updatedOn(entity.getUpdatedOn())
+                .build();
 
     }
 }

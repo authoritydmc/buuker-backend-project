@@ -92,6 +92,8 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         existingTransaction.setProductLink(transactionDTO.getProductLink());
         existingTransaction.setUpdatedOn(transactionDTO.getUpdatedOn());
         TransactionLedger updatedTransaction = repository.save(existingTransaction);
+        accountTransactionService.updateTransaction(updatedTransaction);
+
         return mapper.toDTO(updatedTransaction);
     }
 
@@ -116,7 +118,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         existingTransaction.setDeleted(true);
         existingTransaction.setDeletedOn(System.currentTimeMillis());
         repository.save(existingTransaction);
-
+        accountTransactionService.deleteTransaction(existingTransaction);
         return new Result<>(true, "Transaction deleted successfully."); // Return result without data
     }
 
@@ -138,7 +140,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         existingTransaction.setDeleted(false);
         existingTransaction.setDeletedOn(-1L);
         repository.save(existingTransaction);
-
+        accountTransactionService.saveDebitTransaction(existingTransaction);
         return new Result<>(true, "Transaction restored successfully.");
     }
 
@@ -174,7 +176,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         if (patchDTO.getProductName() != null) existingTransaction.setProductName(patchDTO.getProductName());
         if (patchDTO.getProductLink() != null) existingTransaction.setProductLink(patchDTO.getProductLink());
         if (patchDTO.getUpdatedOn() != null) existingTransaction.setUpdatedOn(patchDTO.getUpdatedOn());
-
+        accountTransactionService.updateTransaction(existingTransaction);
         return mapper.toDTO(repository.save(existingTransaction));
     }
 

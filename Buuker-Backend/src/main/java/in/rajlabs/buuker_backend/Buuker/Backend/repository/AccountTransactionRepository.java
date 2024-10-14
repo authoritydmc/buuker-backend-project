@@ -3,9 +3,11 @@ package in.rajlabs.buuker_backend.Buuker.Backend.repository;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.AccountTransaction;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,4 +29,7 @@ public interface AccountTransactionRepository extends JpaRepository<AccountTrans
      * @return List of AccountTransaction
      */
     List<AccountTransaction> findByAccountIdAndTransactionType(String accountId, TransactionType transactionType);
+
+    @Query("select a from AccountTransaction a where a.transactionId = ?1")
+    Optional<AccountTransaction> getByTransactionID(String transactionId);
 }
