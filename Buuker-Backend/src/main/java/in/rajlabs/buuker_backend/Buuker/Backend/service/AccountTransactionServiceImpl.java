@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
     public AccountTransactionDTO createTransaction(AccountTransactionDTO accountTransactionDTO) {
 
         var accountTransaction = mapper.toEntity(accountTransactionDTO);
+        accountTransaction.setRunningBalance(calculateRunningBalance(accountTransaction));
         accountTransactionRepository.save(accountTransaction);
         return mapper.toDTO(accountTransaction);
 
@@ -70,6 +72,8 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
     public void saveDebitTransaction(TransactionLedger transaction) {
 
         AccountTransaction accountTransaction = mapper.toEntity(transaction);
+        accountTransaction.setRunningBalance(calculateRunningBalance(accountTransaction));
+
         log.info("Saving debit transaction" + accountTransaction);
         accountTransactionRepository.save(accountTransaction);
     }
@@ -87,11 +91,36 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
             var accountTransaction = existingTransaction.get();
             accountTransaction.setAmount(BigDecimal.valueOf(updatedTransaction.getFinalReceiveAmount()));
             accountTransaction.setTransactionType(TransactionType.DEBIT);
+            accountTransaction.setRunningBalance(calculateRunningBalance(accountTransaction));
             accountTransaction.setDescription(updatedTransaction.getRemark());
             accountTransactionRepository.save(accountTransaction);
 
         }
 
+    }
+
+    private BigDecimal calculateRunningBalance(AccountTransaction accountTransaction) {
+        log.info("Calculating running balance for account " + accountTransaction.getAccountId());
+        Optional<AccountTransaction> latestTransaction = accountTransactionRepository.getPreviousAccountTransaction(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId());
+        BigDecimal runningBalance = BigDecimal.ZERO;
+        if (latestTransaction.isPresent()) {
+            runningBalance = latestTransaction.get().getRunningBalance();
+        }
+        log.info("Initial  running balance is " + runningBalance);
+
+        if (accountTransaction.getTransactionType().equals(TransactionType.DEBIT)) {
+            runningBalance = runningBalance.subtract(accountTransaction.getAmount());
+        } else {
+            //this is credit
+            runningBalance = runningBalance.add(accountTransaction.getAmount());
+
+        }
+        log.info("Final  running balance is " + runningBalance);
+
+        //before returning also update the running balance of other items
+        List<AccountTransaction> idsToUpdate = accountTransactionRepository.getAllAccountsToUpdate(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId());
+        updateRunningBalance(idsToUpdate, runningBalance);
+        return runningBalance;
     }
 
     @Override
@@ -105,6 +134,36 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
         log.info("Transaction ID does not exist :: Deleting : {}", existingTransaction.getTransactionID());
 
     }
+
+
+    /**
+     * Updates the running balance for all transactions associated with the given account ID.
+     *
+     * @param accountTransactionsToUpdate LIST of transactions where we need to do the update
+     * @param currentBalance              The current balance at the update/insertion point
+     */
+    private void updateRunningBalance(List<AccountTransaction> accountTransactionsToUpdate, BigDecimal currentBalance) {
+        log.info("Total " + accountTransactionsToUpdate.size() + " account transactions need to be updated.");
+
+        BigDecimal runningBalance = currentBalance; // Start from the current balance
+
+        // Calculate the new running balance
+        for (AccountTransaction transaction : accountTransactionsToUpdate) {
+            // Update running balance based on transaction type
+            if (transaction.getTransactionType() == TransactionType.CREDIT) {
+                runningBalance = runningBalance.add(transaction.getAmount());
+            } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
+                runningBalance = runningBalance.subtract(transaction.getAmount());
+            }
+
+            // Set the calculated running balance for the transaction
+            transaction.setRunningBalance(runningBalance);
+
+            // Save the updated transaction to the repository
+            accountTransactionRepository.save(transaction);
+        }
+    }
+
 }
 
 

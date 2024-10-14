@@ -38,6 +38,8 @@ public class TransactionLedgerMapper {
                 .deletedOn(-1L) //default set of deletionTime
                 .orderStatus(dto.getOrderStatus())
                 .productName(dto.getProductName())
+                .createdOn(dto.getCreatedOn())
+                .updatedOn(dto.getUpdatedOn())
                 .productLink(dto.getProductLink());
 
         // Set transactionID only if present (useful for updates)

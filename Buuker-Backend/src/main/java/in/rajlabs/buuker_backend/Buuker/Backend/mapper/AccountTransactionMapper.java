@@ -35,6 +35,8 @@ public class AccountTransactionMapper {
                 .accountId(AccountUtils.getAccountID(dto.getCustomerID(), dto.getMerchantID()))
                 .createdBy("TBD")
                 .updatedBy("SET THIS VAL FROM CONTROLLER BY PARSING authentication in future ")
+                .createdOn(dto.getCreatedOn())
+                .updatedOn(dto.getUpdatedOn())
                 // createdOn and updatedOn are handled by @PrePersist and @PreUpdate
                 .build();
 
@@ -72,6 +74,8 @@ public class AccountTransactionMapper {
                 .accountId(AccountUtils.getAccountID(transaction.getCustomerID(), transaction.getMerchantID()))
                 .createdBy(transaction.getCustomerID())
                 .updatedBy(transaction.getCustomerID())
+                .updatedOn(transaction.getUpdatedOn())
+                .createdOn(transaction.getCreatedOn())
                 .build();
 
         return entity;
