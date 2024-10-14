@@ -17,4 +17,13 @@ public interface TransactionLedgerRepository extends JpaRepository<TransactionLe
     List<TransactionLedger> getAllCustomerTransactions(String customerID);
     @Query("select t from TransactionLedger t where t.customerID = ?1 and t.isDeleted <> true")
     List<TransactionLedger> getAllCustomerTransactionsNonDeleted(String customerID);
+
+
+
+    @Query("SELECT SUM(t.finalReceiveAmount) FROM TransactionLedger t WHERE t.customerID = :customerId")
+    Double sumAmountByCustomerId(String customerId);
+
+    @Query("select count(t) from TransactionLedger t where t.isDeleted <> true and t.customerID = ?1")
+    long getCustomerTransactionCountNonDeleted(String customerID);
 }
+

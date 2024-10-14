@@ -1,9 +1,6 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.service;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerPatchDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.*;
 import in.rajlabs.buuker_backend.Buuker.Backend.exception.ResourceAlreadyExistsException;
 import in.rajlabs.buuker_backend.Buuker.Backend.exception.ResourceNotFoundException;
 import in.rajlabs.buuker_backend.Buuker.Backend.mapper.TransactionLedgerMapper;
@@ -175,5 +172,13 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         if (patchDTO.getUpdatedOn() != null) existingTransaction.setUpdatedOn(patchDTO.getUpdatedOn());
 
         return mapper.toDTO(repository.save(existingTransaction));
+    }
+
+    @Override
+    public TransactionSummaryDTO getTransactionSummaryByCustomer(String customerId) {
+        Long totalTransactions = repository.getCustomerTransactionCountNonDeleted(customerId);
+        Double totalAmount = repository.sumAmountByCustomerId(customerId);
+
+        return new TransactionSummaryDTO(customerId, totalTransactions, totalAmount);
     }
 }

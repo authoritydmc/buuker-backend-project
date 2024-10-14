@@ -1,9 +1,6 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.controller.api.v1;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerPatchDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.*;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import in.rajlabs.buuker_backend.Buuker.Backend.service.TransactionLedgerService;
 import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.API; // Import the API class
@@ -54,6 +51,18 @@ public class TransactionController {
     public ResponseEntity<TransactionLedgerOutputDTO> getTransactionById(@PathVariable("id") String id) {
         TransactionLedgerOutputDTO transaction = service.getTransactionById(id);
         return new ResponseEntity<>(transaction, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves transaction summary for a specific customer.
+     *
+     * @param customerId ID of the customer
+     * @return ResponseEntity containing TransactionSummaryDTO
+     */
+    @GetMapping("/summary")
+    public ResponseEntity<?> getTransactionSummary(@RequestParam String customerID) {
+        TransactionSummaryDTO summary = service.getTransactionSummaryByCustomer(customerID);
+        return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
     /**

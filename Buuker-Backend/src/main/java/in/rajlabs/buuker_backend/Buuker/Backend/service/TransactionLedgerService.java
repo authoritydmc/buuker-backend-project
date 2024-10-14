@@ -1,9 +1,6 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.service;
 
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.Result;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerInputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerOutputDTO;
-import in.rajlabs.buuker_backend.Buuker.Backend.dto.TransactionLedgerPatchDTO;
+import in.rajlabs.buuker_backend.Buuker.Backend.dto.*;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 
 import java.util.List;
@@ -56,4 +53,6 @@ public interface TransactionLedgerService {
     Result<Void> restoreTransaction(String id);
 
     TransactionLedgerOutputDTO patchTransaction(String transactionId, TransactionLedgerPatchDTO patchDTO);
+
+    TransactionSummaryDTO getTransactionSummaryByCustomer(String customerId);
 }
