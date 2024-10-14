@@ -41,8 +41,8 @@ public interface AccountTransactionRepository extends JpaRepository<AccountTrans
      * @param afterUpdatedOn the timestamp to filter transactions
      * @return a list of AccountTransaction sorted from first to last
      */
-    @Query("SELECT a FROM AccountTransaction a WHERE a.updatedOn >= :afterUpdatedOn and a.accountId = :accountID ORDER BY a.updatedOn ASC")
-    List<AccountTransaction> getAllAccountsToUpdate(@Param("afterUpdatedOn") Long afterUpdatedOn, @Param("accountID") String accountID);
+    @Query("SELECT a FROM AccountTransaction a WHERE a.updatedOn >= :afterUpdatedOn and a.accountId = :accountID and a.id <> :id ORDER BY a.updatedOn ASC")
+    List<AccountTransaction> getAllAccountsToUpdate(@Param("afterUpdatedOn") Long afterUpdatedOn, @Param("accountID") String accountID, @Param("id") UUID id);
 
     /**
      * Finds the previous account transaction before the specified updatedOn timestamp for a specific account ID.
@@ -51,6 +51,6 @@ public interface AccountTransactionRepository extends JpaRepository<AccountTrans
      * @param accountID the ID of the account
      * @return an Optional containing the previous AccountTransaction, if present
      */
-    @Query("SELECT a FROM AccountTransaction a WHERE a.updatedOn <= :beforeUpdatedOn AND a.accountId = :accountID ORDER BY a.updatedOn DESC LIMIT 1")
-   Optional< AccountTransaction> getPreviousAccountTransaction(@Param("beforeUpdatedOn") Long beforeUpdatedOn, @Param("accountID") String accountID);
+    @Query("SELECT a FROM AccountTransaction a WHERE a.updatedOn <= :beforeUpdatedOn AND a.accountId = :accountID  and a.id <> :id  ORDER BY a.updatedOn DESC LIMIT 1")
+   Optional< AccountTransaction> getPreviousAccountTransaction(@Param("beforeUpdatedOn") Long beforeUpdatedOn, @Param("accountID") String accountID,@Param("id") UUID id);
 }

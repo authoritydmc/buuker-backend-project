@@ -8,6 +8,7 @@ import in.rajlabs.buuker_backend.Buuker.Backend.model.AccountTransaction;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionType;
 import in.rajlabs.buuker_backend.Buuker.Backend.repository.AccountTransactionRepository;
+import in.rajlabs.buuker_backend.Buuker.Backend.util.AccountUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +91,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
         if (existingTransaction.isPresent()) {
             var accountTransaction = existingTransaction.get();
             accountTransaction.setAmount(BigDecimal.valueOf(updatedTransaction.getFinalReceiveAmount()));
-            accountTransaction.setTransactionType(TransactionType.DEBIT);
+            accountTransaction.setTransactionType(AccountUtils.getTransactionTypeFromOrderStatus(updatedTransaction.getOrderStatus()));
             accountTransaction.setRunningBalance(calculateRunningBalance(accountTransaction));
             accountTransaction.setDescription(updatedTransaction.getRemark());
             accountTransactionRepository.save(accountTransaction);
@@ -101,12 +102,12 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 
     private BigDecimal calculateRunningBalance(AccountTransaction accountTransaction) {
         log.info("Calculating running balance for account " + accountTransaction.getAccountId());
-        Optional<AccountTransaction> latestTransaction = accountTransactionRepository.getPreviousAccountTransaction(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId());
+        Optional<AccountTransaction> latestTransaction = accountTransactionRepository.getPreviousAccountTransaction(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId(), accountTransaction.getId());
         BigDecimal runningBalance = BigDecimal.ZERO;
         if (latestTransaction.isPresent()) {
             runningBalance = latestTransaction.get().getRunningBalance();
         }
-        log.info("Initial  running balance is " + runningBalance);
+        log.info("Initial  running balance is {}", runningBalance);
 
         if (accountTransaction.getTransactionType().equals(TransactionType.DEBIT)) {
             runningBalance = runningBalance.subtract(accountTransaction.getAmount());
@@ -118,7 +119,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
         log.info("Final  running balance is " + runningBalance);
 
         //before returning also update the running balance of other items
-        List<AccountTransaction> idsToUpdate = accountTransactionRepository.getAllAccountsToUpdate(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId());
+        List<AccountTransaction> idsToUpdate = accountTransactionRepository.getAllAccountsToUpdate(accountTransaction.getUpdatedOn(), accountTransaction.getAccountId(), accountTransaction.getId());
         updateRunningBalance(idsToUpdate, runningBalance);
         return runningBalance;
     }
@@ -144,6 +145,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
      */
     private void updateRunningBalance(List<AccountTransaction> accountTransactionsToUpdate, BigDecimal currentBalance) {
         log.info("Total " + accountTransactionsToUpdate.size() + " account transactions need to be updated.");
+        log.info("Initial Current balance is " + currentBalance);
 
         BigDecimal runningBalance = currentBalance; // Start from the current balance
 

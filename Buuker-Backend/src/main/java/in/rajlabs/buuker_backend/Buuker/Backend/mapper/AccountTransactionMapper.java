@@ -67,7 +67,7 @@ public class AccountTransactionMapper {
         }
 
         AccountTransaction entity = AccountTransaction.builder()
-                .transactionType(TransactionType.DEBIT)
+                .transactionType(AccountUtils.getTransactionTypeFromOrderStatus(transaction.getOrderStatus()))
                 .transactionId(transaction.getTransactionID())
                 .amount(BigDecimal.valueOf(transaction.getFinalReceiveAmount()))
                 .description(transaction.getRemark())
