@@ -5,6 +5,7 @@ import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
 import in.rajlabs.buuker_backend.Buuker.Backend.service.TransactionLedgerService;
 import in.rajlabs.buuker_backend.Buuker.Backend.controller.api.API; // Import the API class
 import in.rajlabs.buuker_backend.Buuker.Backend.util.ResponseHelper;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,7 @@ public class TransactionController {
      * @return ResponseEntity containing the created TransactionLedgerDTO
      */
     @PostMapping
+    @Transactional
     public ResponseEntity<TransactionLedgerOutputDTO> createTransaction(
             @Validated @RequestBody TransactionLedgerInputDTO transactionDTO) {
         TransactionLedgerOutputDTO createdTransaction = service.createTransaction(transactionDTO);
@@ -123,7 +125,7 @@ public class TransactionController {
     @PatchMapping("/{transactionId}")
     public ResponseEntity<?> patchTransaction(
             @PathVariable String transactionId,
-          @Validated  @RequestBody TransactionLedgerPatchDTO patchDTO) {
+            @Validated @RequestBody TransactionLedgerPatchDTO patchDTO) {
         TransactionLedgerOutputDTO updatedTransaction = service.patchTransaction(transactionId, patchDTO);
         return ResponseEntity.ok(updatedTransaction);
     }
@@ -139,13 +141,11 @@ public class TransactionController {
             // Use the ResponseHelper to create a success response
             return ResponseEntity.ok(ResponseHelper.createSuccessResponseWithTimestamp(
                     "Successfully restored record " + id));
-        }else if(restorationResult.getMessage().contains("not found"))
-        {
+        } else if (restorationResult.getMessage().contains("not found")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ResponseHelper.createErrorResponseWithTimestamp(
                             restorationResult.getMessage()));
-        }
-        else {
+        } else {
             // Use the ResponseHelper to create an error response
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ResponseHelper.createErrorResponseWithTimestamp(

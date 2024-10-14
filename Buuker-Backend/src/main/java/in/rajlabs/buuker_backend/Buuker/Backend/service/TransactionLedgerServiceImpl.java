@@ -22,9 +22,12 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
 
     private final TransactionLedgerMapper mapper;
 
-    public TransactionLedgerServiceImpl(TransactionLedgerRepository repository, TransactionLedgerMapper mapper) {
+    private final AccountTransactionService accountTransactionService;
+
+    public TransactionLedgerServiceImpl(TransactionLedgerRepository repository, TransactionLedgerMapper mapper, AccountTransactionService accountTransactionService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.accountTransactionService = accountTransactionService;
     }
 
     @Override
@@ -61,6 +64,7 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         // If it does not exist, create a new transaction
         TransactionLedger transaction = mapper.toEntity(transactionDTO);
         TransactionLedger savedTransaction = repository.save(transaction);
+        accountTransactionService.saveDebitTransaction(transaction);
         return mapper.toDTO(savedTransaction);
     }
 

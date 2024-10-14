@@ -2,8 +2,13 @@ package in.rajlabs.buuker_backend.Buuker.Backend.mapper;
 
 import in.rajlabs.buuker_backend.Buuker.Backend.dto.AccountTransactionDTO;
 import in.rajlabs.buuker_backend.Buuker.Backend.model.AccountTransaction;
+import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionLedger;
+import in.rajlabs.buuker_backend.Buuker.Backend.model.TransactionType;
 import in.rajlabs.buuker_backend.Buuker.Backend.util.AccountUtils;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Mapper class to convert between AccountTransaction and AccountTransactionDTO.
@@ -51,5 +56,24 @@ public class AccountTransactionMapper {
                 .amount(entity.getAmount())
                 .description(entity.getDescription())
                 .build();
+    }
+
+    public AccountTransaction toEntity(TransactionLedger transaction) {
+        if (transaction == null) {
+            return null;
+        }
+
+        AccountTransaction entity = AccountTransaction.builder()
+                .transactionType(TransactionType.DEBIT)
+                .id(UUID.fromString(transaction.getTransactionID()))
+                .amount(BigDecimal.valueOf(transaction.getFinalReceiveAmount()))
+                .description(transaction.getRemark())
+                .accountId(AccountUtils.getAccountID(transaction.getCustomerID(), transaction.getMerchantID()))
+                .createdBy(transaction.getCustomerID())
+                .updatedBy(transaction.getCustomerID())
+                .build();
+
+        return entity;
+
     }
 }
