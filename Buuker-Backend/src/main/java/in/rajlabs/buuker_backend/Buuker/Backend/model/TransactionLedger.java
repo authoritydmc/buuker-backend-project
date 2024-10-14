@@ -1,5 +1,6 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.model;
 
+import in.rajlabs.buuker_backend.Buuker.Backend.util.TransactionUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,17 +70,14 @@ public class TransactionLedger {
 
     private String productLink;
 
-//    @PrePersist as all time details are trusted  from client side +offline support mode for android client
-//    protected void onCreate() {
-//        long currentEpoch = System.currentTimeMillis();
-//        this.createdOn = currentEpoch;
-//        this.updatedOn = currentEpoch;
-//        this.setDeletedOn(-1L);
-//    }
-//
-//
-////    @PreUpdate
-////    protected void onUpdate() {
-////        this.updatedOn = System.currentTimeMillis();
-////    }
+    @PrePersist
+    protected void onCreate() {
+        this.runningBalance = TransactionUtils.calculateRunningBalance(this.customerID, this.updatedOn);
+    }
+
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.runningBalance = TransactionUtils.calculateRunningBalance(this.customerID, this.updatedOn);
+    }
 }

@@ -54,10 +54,11 @@ public class TransactionLedgerInputDTO {
     private String customerID;
 
     @NotNull(message = "CreatedOn timestamp is required")
-
+    @Min(value = 1690000000000L, message = "createdOn is epoch timestamp !! please pass correct value ")
     private Long createdOn;
 
     @NotNull(message = "updatedOn timestamp is required")
+    @Min(value = 1690000000000L, message = "updatedOn is epoch timestamp !! please pass correct value ")
 
     private Long updatedOn;
 

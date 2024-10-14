@@ -82,15 +82,14 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         existingTransaction.setBookingMobNo(transactionDTO.getBookingMobNo());
         existingTransaction.setShippedFrom(transactionDTO.getShippedFrom());
         existingTransaction.setShippingTrackingID(transactionDTO.getShippingTrackingID());
-        existingTransaction.setRunningBalance(calculateRunningBalance(transactionDTO.getCustomerID()));
         existingTransaction.setBookingCardDetails(transactionDTO.getBookingCardDetails());
         existingTransaction.setCustomerID(transactionDTO.getCustomerID());
         existingTransaction.setRemark(transactionDTO.getRemark());
+        existingTransaction.setBookingCardDetails(transactionDTO.getBookingCardDetails());
         existingTransaction.setOrderStatus(transactionDTO.getOrderStatus());
         existingTransaction.setProductName(transactionDTO.getProductName());
         existingTransaction.setProductLink(transactionDTO.getProductLink());
-
-        // updatedOn is handled automatically via @PreUpdate in the entity
+        existingTransaction.setUpdatedOn(transactionDTO.getUpdatedOn());
         TransactionLedger updatedTransaction = repository.save(existingTransaction);
         return mapper.toDTO(updatedTransaction);
     }
@@ -167,7 +166,6 @@ public class TransactionLedgerServiceImpl implements TransactionLedgerService {
         if (patchDTO.getShippedFrom() != null) existingTransaction.setShippedFrom(patchDTO.getShippedFrom());
         if (patchDTO.getShippingTrackingID() != null)
             existingTransaction.setShippingTrackingID(patchDTO.getShippingTrackingID());
-        if (patchDTO.getRunningBalance() > 0) existingTransaction.setRunningBalance(patchDTO.getRunningBalance());
         if (patchDTO.getBookingCardDetails() != null)
             existingTransaction.setBookingCardDetails(patchDTO.getBookingCardDetails());
         if (patchDTO.getRemark() != null) existingTransaction.setRemark(patchDTO.getRemark());

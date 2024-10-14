@@ -114,7 +114,7 @@ public class TransactionController {
     @PatchMapping("/{transactionId}")
     public ResponseEntity<?> patchTransaction(
             @PathVariable String transactionId,
-            @RequestBody TransactionLedgerPatchDTO patchDTO) {
+          @Validated  @RequestBody TransactionLedgerPatchDTO patchDTO) {
         TransactionLedgerOutputDTO updatedTransaction = service.patchTransaction(transactionId, patchDTO);
         return ResponseEntity.ok(updatedTransaction);
     }
