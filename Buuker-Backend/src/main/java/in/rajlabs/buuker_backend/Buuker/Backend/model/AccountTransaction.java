@@ -1,5 +1,7 @@
 package in.rajlabs.buuker_backend.Buuker.Backend.model;
 
+import in.rajlabs.buuker_backend.Buuker.Backend.util.AccountUtils;
+import in.rajlabs.buuker_backend.Buuker.Backend.util.TransactionUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +40,8 @@ public class AccountTransaction {
 
     private Long createdOn;
 
+    private BigDecimal runningBalance;
+
     private Long updatedOn;
 
     private String createdBy;
@@ -49,11 +53,14 @@ public class AccountTransaction {
     protected void onCreate() {
         createdOn = System.currentTimeMillis();
         updatedOn = System.currentTimeMillis();
+        runningBalance = AccountUtils.calculateRunningBalance(accountId);
     }
 
 
     @PreUpdate
     protected void onUpdate() {
         updatedOn = System.currentTimeMillis();
+        runningBalance = AccountUtils.calculateRunningBalance(accountId);
+
     }
 }

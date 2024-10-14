@@ -73,7 +73,6 @@ public class TransactionLedgerMapper {
                 .shippedFrom(entity.getShippedFrom())
                 .customerID(entity.getCustomerID())
                 .shippingTrackingID(entity.getShippingTrackingID())
-                .runningBalance(entity.getRunningBalance())
                 .createdOn(entity.getCreatedOn())
                 .updatedOn(entity.getUpdatedOn())
                 .bookingCardDetails(entity.getBookingCardDetails())

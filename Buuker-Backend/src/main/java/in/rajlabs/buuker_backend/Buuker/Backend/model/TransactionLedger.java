@@ -43,14 +43,9 @@ public class TransactionLedger {
 
     private String bookingMobNo;
 
-
     private String shippedFrom;
 
-
     private String shippingTrackingID;
-
-    private double runningBalance;
-
 
     private Long createdOn;
 
@@ -67,17 +62,6 @@ public class TransactionLedger {
 
     private String productName;
 
-
     private String productLink;
 
-    @PrePersist
-    protected void onCreate() {
-        this.runningBalance = TransactionUtils.calculateRunningBalance(this.customerID, this.updatedOn);
-    }
-
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.runningBalance = TransactionUtils.calculateRunningBalance(this.customerID, this.updatedOn);
-    }
 }
